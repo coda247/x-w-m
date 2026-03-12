@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '~>2.6'
+ruby '~> 3.2.3'
 gem 'rake'
 
 gem 'sshkey' # SSH key generation gem
