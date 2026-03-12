@@ -1,8 +1,8 @@
 ---
 app:
-  name: Contix
-  domain: contix.com
-  subdomain: backend
+  name: Cubeos
+  domain: cube.ng
+  subdomain: peakock
   expose: false
 render_protect: false
 ssl:

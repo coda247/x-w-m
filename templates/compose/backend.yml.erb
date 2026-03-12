@@ -6,13 +6,13 @@ services:
       - zookeeper
       - kafka
     volumes:
-      - ../data/db:/var/lib/postgresql/data
+      - /var/antantica/db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: <%= @config['database']['user'] %>
       POSTGRES_PASSWORD: <%= @config['database']['password'] %>
 
-#    ports:
-#      - "5432:5432"
+  #    ports:
+  #      - "5432:5432"
 
   adminer:
     image: adminer:standalone
@@ -38,19 +38,19 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     volumes:
-      - ../data/zookeeper/data:/var/lib/zookeeper/data
-      - ../data/zookeeper/log:/var/lib/zookeeper/log
+      - /var/antantica/zookeeper/data:/var/lib/zookeeper/data
+      - /var/antantica/zookeeper/log:/var/lib/zookeeper/log
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
 
   kafka:
     image: confluentinc/cp-enterprise-kafka:7.0.1
-#    ports:
-#      - "9092:9092"
+    #    ports:
+    #      - "9092:9092"
     depends_on:
       - zookeeper
     volumes:
-      - ../data/kafka:/var/lib/kafka/data
+      - /var/antantica/kafka:/var/lib/kafka/data
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
@@ -60,11 +60,11 @@ services:
 
   redis:
     image: redis:4.0.10
-#    ports:
-#      - "6379:6379"
+    #    ports:
+    #      - "6379:6379"
     restart: always
     volumes:
-      - ../data/redis:/data
+      - /var/antantica/redis:/data
 
   influxdb:
     image: influxdb:1.7.8
@@ -73,13 +73,13 @@ services:
       INFLUXDB_ADMIN_ENABLED: "true"
     volumes:
       - ../config/influxdb/influxdb.sql:/influxdb.sql
-      - ../data/influxdb:/var/lib/influxdb
+      - /var/antantica/influxdb:/var/lib/influxdb
 
   vault:
     image: vault:1.3.0
     restart: always
     volumes:
-      - ../data/vault:/vault/data
+      - /var/antantica/vault:/vault/data
       - ../config/vault:/tmp/policies
     command:
       - server

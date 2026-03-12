@@ -20,19 +20,6 @@ services:
       - ../config/auth/auth.yml:/home/app/config/auth.yml:ro
       - ../config/auth/authz_rules.yml:/home/app/config/authz_rules.yml:ro
       - ../config/auth/management_api.yml:/home/app/config/management_api.yml:ro
-  admin:
-    image: "<%= @config['images']['admin'] %>"
-    restart: always
-    labels:
-      - "traefik.http.routers.admin-<%= @name %>.rule=Host(`<%= @config['app']['subdomain'] %>.<%= @config['app']['domain'] %>`) && PathPrefix(`/admin`)"
-      - "traefik.http.services.admin-<%= @name %>.loadbalancer.server.port=80"
-      - "traefik.enable=true"
-      <%- if @config['ssl']['enabled'] -%>
-      - "traefik.http.routers.admin-<%= @name %>.entrypoints=websecure"
-      - "traefik.http.routers.admin-<%= @name %>.tls=true"
-      <%- else -%>
-      - "traefik.http.routers.admin-<%= @name %>.entrypoints=web"
-      <%- end -%>
   amm:
     image: "<%= @utils['images']['amm'] %>"
     restart: always
@@ -54,51 +41,5 @@ services:
       - ../config/applogic.env
     command: "./bin/applogic-api"
 
-  spot:
-    image: "<%= @utils['images']['spot'] %>"
-    restart: always
-    env_file:
-      - ../config/spot.env
-    volumes:
-      - ../config/spot/config.yaml:/app/config/config.yaml
-    command: "./finex-api"
 
-  stock:
-    image: "<%= @utils['images']['stock'] %>"
-    restart: always
-    env_file:
-      - ../config/stock.env
-    volumes:
-      - ../config/spot/config.yaml:/app/config/config.yaml
-    command: "./stock-api"
 
-  broker:
-    image: "<%= @config['images']['broker'] %>"
-    restart: always
-    env_file:
-      - ../config/broker.env
-    command: "./broker-api"
-
-  dns:
-    image: "<%= @config['images']['dns'] %>"
-    restart: always
-    env_file:
-      - ../config/dns.env
-    command: "./dns"
-
-  assets-currency:
-    image: nginx:stable
-    restart: always
-    volumes:
-      - ../config/nginx/config.conf:/etc/nginx/nginx.conf:ro
-      - ../data/assets-currency:/var/www/html/assets-currency:ro
-    labels:
-      - "traefik.http.routers.assets-currency-<%= @name %>.rule=Host(`<%= @config['app']['subdomain'] %>.<%= @config['app']['domain'] %>`) && PathPrefix(`/assets-currency`)"
-      - "traefik.http.services.assets-currency-<%= @name %>.loadbalancer.server.port=80"
-      - "traefik.enable=true"
-      <%- if @config['ssl']['enabled'] -%>
-      - "traefik.http.routers.assets-currency-<%= @name %>.entrypoints=websecure"
-      - "traefik.http.routers.assets-currency-<%= @name %>.tls=true"
-      <%- else -%>
-      - "traefik.http.routers.assets-currency-<%= @name %>.entrypoints=web"
-      <%- end -%>

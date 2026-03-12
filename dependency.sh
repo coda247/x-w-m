@@ -1,57 +1,95 @@
 #!/bin/bash
 
-# Update package lists and upgrade system
-sudo apt update && sudo apt upgrade -y
+set -e
 
-# Install dependencies for Ruby
-sudo apt install -y git curl libssl-dev libreadline-dev zlib1g-dev autoconf bison build-essential \
-libyaml-dev libncurses5-dev libffi-dev libgdbm-dev
+echo "Updating system..."
+sudo apt update -y
 
-# Install rbenv to manage Ruby versions
-if ! command -v rbenv &> /dev/null; then
-  curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-  echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-  source ~/.bashrc
-fi
+echo "Installing base dependencies..."
+sudo apt install -y build-essential curl git ca-certificates gnupg \
+libssl-dev libreadline-dev zlib1g-dev libyaml-dev libffi-dev \
+libgdbm-dev libncurses5-dev libtool bison autoconf
 
-# Install ruby-build to compile Ruby
-if [ ! -d ~/.rbenv/plugins/ruby-build ]; then
-  git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-fi
+########################################
+# Install Ruby 3.2.3
+########################################
 
-# Install Ruby 2.6.6
-rbenv install 2.6.6
-rbenv global 2.6.6
+echo "Installing Ruby 3.2.3..."
 
-# Verify Ruby installation
+cd /tmp
+curl -O https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.3.tar.gz
+tar -xzf ruby-3.2.3.tar.gz
+cd ruby-3.2.3
+
+./configure
+make -j$(nproc)
+sudo make install
+
+echo "Ruby installed:"
 ruby -v
 
-# Install Bundler 2.4.22
+########################################
+# Install Bundler
+########################################
+
+echo "Installing Bundler 2.4.22..."
 gem install bundler -v 2.4.22
-bundle -v
 
-# Install Docker (latest stable version)
-sudo apt install -y ca-certificates curl gnupg lsb-release
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "Bundler installed:"
+bundler -v
+
+########################################
+# Install Docker 29.1.3
+########################################
+
+echo "Installing Docker..."
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+| sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
 sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# Verify Docker installation
-docker --version
+sudo apt install -y docker-ce docker-ce-cli containerd.io
 
-# Install specific Docker Compose binary 2.39.2 (standalone, for compatibility)
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.39.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# Verify Docker Compose installation
-docker-compose --version
-
-# Add user to docker group to run Docker without sudo
 sudo usermod -aG docker $USER
 
-# Inform user to log out and back in for group changes
-echo "Please log out and log back in to apply Docker group changes, or run 'newgrp docker' in this terminal."
+echo "Docker installed:"
+docker --version
+
+########################################
+# Install Docker Compose v5.0.1
+########################################
+
+echo "Installing Docker Compose v5.0.1..."
+
+sudo curl -L \
+https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-linux-x86_64 \
+-o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+echo "Docker Compose installed:"
+docker-compose --version
+
+########################################
+
+echo "Installation Complete!"
+echo "Ruby:"
+ruby -v
+
+echo "Bundler:"
+bundler -v
+
+echo "Docker:"
+docker --version
+
+echo "Docker Compose:"
+docker-compose --version

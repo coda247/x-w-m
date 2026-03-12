@@ -142,6 +142,25 @@ namespace :service do
     @switch.call(args, method(:start), method(:stop))
   end
 
+
+  desc 'Run backend (does not run Optional)'
+  task :back, [:command] => 'transpile:config' do |task, args|
+    args.with_defaults(:command => 'start')
+
+    def start
+      puts '----- Starting Micro App -----'
+      Rake::Task["service:backend"].invoke('start')
+    end
+
+    def stop
+      Rake::Task["service:backend"].invoke('stop')
+
+    end
+
+    @switch.call(args, method(:start), method(:stop))
+  end
+
+
   desc 'Run the micro app with dependencies (does not run Optional)'
   task :all, [:command] => 'transpile:config' do |task, args|
     args.with_defaults(:command => 'start')
