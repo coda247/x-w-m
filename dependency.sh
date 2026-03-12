@@ -93,3 +93,5 @@ docker --version
 
 echo "Docker Compose:"
 docker-compose --version
+
+bundle install

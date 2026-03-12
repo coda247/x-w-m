@@ -10,6 +10,7 @@ ssl:
 images:
   auth: ghcr.io/coda247/auth:latest
   api: ghcr.io/coda247/api:latest
+  socket: ghcr.io/coda247/socket:latest
 storage:
   provider: AWS
   bucketName: ctx
