@@ -1,0 +1,13 @@
+{
+  "name": "auth_postgresql",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.server.name": "auth",
+    "database.hostname": "<%= @config['database']['host'] %>",
+    "database.port": "<%= @config['database']['port'] %>",
+    "database.user": "<%= @config['database']['user'] %>",
+    "database.password": "<%= @config['database']['password'] %>",
+    "database.dbname": "auth_production"
+  }
+}

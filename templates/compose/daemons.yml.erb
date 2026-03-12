@@ -1,0 +1,62 @@
+x-daemon: &api-daemon
+  image: "<%= @config['images']['api'] %>"
+  restart: always
+  env_file:
+    - ../config/api.env
+  volumes:
+    - ../config/api/seed:/home/app/config/seed
+
+x-finex-daemon: &finex-daemon
+  image: "<%= @utils['images']['spot'] %>"
+  restart: always
+  env_file:
+    - ../config/spot.env
+  volumes:
+    - ../config/spot/config.yaml:/app/config/config.yaml
+
+services:
+  mailer:
+    restart: always
+    image: "<%= @config['images']['auth'] %>"
+    env_file:
+      - ../config/auth.env
+    volumes:
+      -  ../config/secrets:/secrets:ro
+      -  ../config/mailer/layouts/mailer.html.erb:/home/app/app/views/layouts/mailer.html.erb
+      -  ../config/mailer/postmaster:/home/app/app/views/postmaster
+      -  ../config/mailer.yml:/home/app/config/mailer.yml
+    command: bash -c "bin/mailer run"
+
+<% if @config['daemons']['ieo_order_processor'] -%>
+  ieo_order_processor:
+    << : *finex-daemon
+    depends_on:
+      - ieo_order_executor
+    command: "./finex-engine ieo_order_processor"
+<% end %>
+
+<% if @config['daemons']['ieo_order_executor'] -%>
+  ieo_order_executor:
+    << : *finex-daemon
+    command: "./finex-engine ieo_order_executor"
+<% end %>
+
+<% if @config['daemons']['trade_executor'] -%>
+  trade_executor:
+    << : *finex-daemon
+    command: "./finex-engine trade_executor"
+<% end %>
+
+<% if @config['daemons']['matching'] -%>
+  matching:
+    << : *finex-daemon
+    command: "./finex-matching-engine"
+<% end %>
+
+<% if @config['daemons']['order_processor'] -%>
+  order_processor:
+    << : *finex-daemon
+    depends_on:
+      - matching
+    command: "./finex-engine order_processor"
+<% end %>

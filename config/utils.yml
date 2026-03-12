@@ -1,0 +1,4 @@
+images:
+  amm: ghcr.io/coda247/amm:latest
+  applogic: ghcr.io/coda247/applogic:latest
+  stock: ghcr.io/coda247/stock:latest

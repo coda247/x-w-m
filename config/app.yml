@@ -1,0 +1,53 @@
+---
+app:
+  name: Contix
+  domain: contix.com
+  subdomain: backend
+  expose: false
+render_protect: false
+ssl:
+  enabled: false
+images:
+  auth: ghcr.io/coda247/auth:latest
+  api: ghcr.io/coda247/api:latest
+storage:
+  provider: AWS
+  bucketName: ctx
+  accessKey: changemePlease
+  secretKey: changemePlease
+twilio:
+  phone_number: "+1xxxxxxxxxxxxx"
+  account_sid: changemePlease
+  auth_token: changemePlease
+  service_id: MG093ddefd24da33eb3f93ba1834981a61
+vault:
+  root_token: s.x26SlCcXEdrUmZpEYx5RSw3h
+  api_rails_token: s.Bilzd1R7ZikxpNN5plccxokp
+  api_crypto_token: s.tgLktro2pM0dVXP6vHLBHLiq
+  api_upstream_token: s.3U9y3OSJi6dZaCotyFFpCKh7
+  api_matching_token: s.myAqtsgqkNvaYHwqDfVXMctq
+  auth_token: s.rGtrzt9xv3ecib4FqZsKl0ee
+  finex_engine_token: s.PCpfDVZF0OcrGa9R0GYRsUK1
+database:
+  host: db
+  port: 5432
+  user: root
+  password: zEH1WA4gZf9Y
+recaptcha:
+  siteKey: changemePlease
+  secretKey: changemePlease
+smtp:
+  host: mail.cubeapp.yorg
+  port: 587
+  user: no-reply@cubeapp.org
+  password: Xcode@200
+  sender_email: no-reply@cubeapp.org
+  sender_name: Ctx
+  sender_logo: https://www.cubeos.us/cubeSplash.png
+daemons:
+  mailer: true
+dns:
+  cloudflare_api_token: ZyV-zd_PqlufKoYxDUTu4FVbej8i-Ym7CvLEz9RU
+  cloudflare_zone_id: 72b9e080a42a96f001ef64490590c62e
+  parent_domain: kaucus.org
+  origin_hostname: kaucus.org

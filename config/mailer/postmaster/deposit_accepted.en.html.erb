@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="header">
+    <div class="header-logo">
+      <%= image_tag @logo %>
+    </div>
+  </div>
+  <div class="content">
+    <h2 class="title">Deposit Confirmed</h2>
+    <p>
+      You've received <%= @record.amount %> <%= @record.currency %> in your Contisx account.
+      <br>
+
+
+      This is an automated message, please do not reply.
+    </p>
+  </div>
+</div>

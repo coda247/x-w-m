@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="header">
+    <div class="header-logo">
+      <%= image_tag @logo %>
+    </div>
+  </div>
+  <div class="content">
+    <h2 class="title">Address Book Confirmation</h2>
+    <p>
+      New <%= @record.currency %> Address Book created!
+      <br>
+      to this address: <%= @record.rid %>
+      <br>
+      <br>
+      Verification code:
+      <br>
+      <br>
+      <span class="confirm_code"><%= @record.code %></span>
+
+      <br>
+
+      This is an automated message, please do not reply.
+    </p>
+  </div>
+
+</div>
