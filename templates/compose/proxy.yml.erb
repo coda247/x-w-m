@@ -8,15 +8,15 @@ services:
     volumes:
       - ../config/traefik/dyn.yml:/etc/traefik/dyn.yml:ro
       - ../config/traefik/config.yml:/etc/traefik/traefik.yml:ro
-      - /etc/letsencrypt/live/www.cubegroup.io/fullchain.pem:/etc/traefik/certs/fullchain.pem:ro
-      - /etc/letsencrypt/live/www.cubegroup.io/privkey.pem:/etc/traefik/certs/privkey.pem:ro
+      - /etc/letsencrypt/live/<%= @config['app']['subdomain'] %>.<%= @config['app']['domain'] %>/fullchain.pem:/etc/traefik/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/<%= @config['app']['subdomain'] %>.<%= @config['app']['domain'] %>/privkey.pem:/etc/traefik/certs/privkey.pem:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.cubegroup.rule=Host(`www.cubegroup.io`)"
+      - "traefik.http.routers.<%= @config['app']['name'] %>.rule=Host(`<%= @config['app']['subdomain'] %>.<%= @config['app']['domain'] %>`)"
       <%- if @config['ssl']['enabled'] -%>
-      - "traefik.http.routers.cubegroup.entrypoints=websecure"
-      - "traefik.http.routers.cubegroup.tls=true"
+      - "traefik.http.routers.<%= @config['app']['name'] %>.entrypoints=websecure"
+      - "traefik.http.routers.<%= @config['app']['name'] %>.tls=true"
       <%- else -%>
-      - "traefik.http.routers.cubegroup.entrypoints=web"
+      - "traefik.http.routers.<%= @config['app']['name'] %>.entrypoints=web"
       <%- end -%>
